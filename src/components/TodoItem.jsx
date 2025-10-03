@@ -1,33 +1,33 @@
 import React from "react";
 
 export default function TodoItem({
-  todo,           // current item
-  isEditing,      // is this row in edit mode?
-  draft,          // text while editing
-  setDraft,       // update edit text
-  onToggle,       // checkbox handler
-  onStartEdit,    // enter edit mode
-  onSaveEdit,     // save
-  onCancelEdit,   // cancel
-  onDelete        // delete (UI disables unless completed)
+  todo,        // the row data
+  editId,      // which id is in edit mode (from parent)
+  text,        // draft text while editing
+  setText,     // set draft text
+  toggle,      // (id) => flip completed
+  start,       // (todo) => begin editing this row
+  save,        // (id) => save draft to title
+  cancel,      // () => stop editing
+  remove       // (id) => delete
 }) {
+  const editing = editId === todo.id;
+
   return (
     <li className="todo-item">
-      {/* checkbox hidden during edit for a simpler UI */}
-      {!isEditing && (
+      {!editing && (
         <input
           type="checkbox"
           checked={todo.completed}
-          onChange={onToggle}
-          aria-label={`Toggle ${todo.title}`}
+          onChange={() => toggle(todo.id)}
         />
       )}
 
       <div className="todo-main">
-        {isEditing ? (
+        {editing ? (
           <input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
             autoFocus
           />
         ) : (
@@ -37,17 +37,17 @@ export default function TodoItem({
         )}
       </div>
 
-      {isEditing ? (
+      {editing ? (
         <>
-          <button onClick={onSaveEdit}>Save</button>
-          <button onClick={onCancelEdit}>Cancel</button>
+          <button onClick={() => save(todo.id)}>Save</button>
+          <button onClick={cancel}>Cancel</button>
         </>
       ) : (
         <>
-          <button onClick={onStartEdit}>Edit</button>
+          <button onClick={() => start(todo)}>Edit</button>
           <button
-            onClick={onDelete}
-            disabled={!todo.completed} // delete disabled unless completed (rubric)
+            onClick={() => remove(todo.id)}
+            disabled={!todo.completed}
             title={!todo.completed ? "Complete it first to delete" : "Delete"}
           >
             Delete

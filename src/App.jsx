@@ -5,8 +5,9 @@ import Tabs from "./components/Tabs";
 import TodoList from "./components/TodoList";
 import initialTodos from "./data/initialTodos";
 import { todosReducer, TYPES } from "./reducers/todosReducer";
+import "./App.css";
 
-// Filter helper for each page
+// filter for each page
 function filterByPath(todos, pathname) {
   if (pathname === "/active") return todos.filter((todo) => !todo.completed);
   if (pathname === "/completed") return todos.filter((todo) => todo.completed);
@@ -14,21 +15,15 @@ function filterByPath(todos, pathname) {
 }
 
 export default function App() {
-  // useReducer: main list state
-  const [todos, dispatch] = useReducer(todosReducer, initialTodos);
-
-  // useState: small UI pieces
-  const [newText, setNewText] = useState(""); // add-input (controlled)
+  // ---------- hooks (MUST come before using them) ----------
+  const [todos, dispatch] = useReducer(todosReducer, initialTodos); // reducer state
+  const [newText, setNewText] = useState("");       // add-input
   const [editingId, setEditingId] = useState(null); // which row is editing
-  const [draft, setDraft] = useState(""); // edit-input (controlled)
-
-  // id generator for new items
+  const [draft, setDraft] = useState("");           // edit-input text
   const nextId = useRef(1000);
-
-  // read current path to filter view
   const location = useLocation();
 
-  // Load from LocalStorage ONCE (if present). Otherwise keep initialTodos.
+  // ---------- LocalStorage load once ----------
   useEffect(() => {
     const saved = localStorage.getItem("todos");
     if (saved) {
@@ -38,17 +33,17 @@ export default function App() {
           dispatch({ type: TYPES.INIT, todos: parsed });
         }
       } catch {
-        // ignore bad JSON; stay with initialTodos
+        // ignore bad JSON
       }
     }
   }, []);
 
-  // Save to LocalStorage whenever todos change
+  // ---------- LocalStorage save on change ----------
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  // Add new todo at TOP
+  // ---------- add new (goes to TOP) ----------
   function handleAdd(e) {
     e.preventDefault();
     const id = nextId.current++;
@@ -56,36 +51,22 @@ export default function App() {
     setNewText("");
   }
 
-  // Start editing one row
-  function startEditing(todo) {
-    setEditingId(todo.id);
-    setDraft(todo.title);
-  }
+  // ---------- compact callbacks (these caused your error if outside/above) ----------
+  const toggle = (id) => dispatch({ type: TYPES.TOGGLE, id });
+  const remove = (id) => dispatch({ type: TYPES.DELETE, id });
+  const start  = (todo) => { setEditingId(todo.id); setDraft(todo.title); };
+  const save   = (id) => { dispatch({ type: TYPES.SAVE_TITLE, id, title: draft }); setEditingId(null); setDraft(""); };
+  const cancel = () => { setEditingId(null); setDraft(""); };
 
-  // Save edit
-  function saveEditing(id) {
-    dispatch({ type: TYPES.SAVE_TITLE, id, title: draft });
-    setEditingId(null);
-    setDraft("");
-  }
-
-  // Cancel edit
-  function cancelEditing() {
-    setEditingId(null);
-    setDraft("");
-  }
-
-  // Which items to show on this page?
+  // ---------- filter by current page ----------
   const visible = filterByPath(todos, location.pathname);
 
   return (
     <div className="todo-app">
       <h1>Todo List</h1>
 
-      {/* page tabs */}
       <Tabs />
 
-      {/* add form (controlled) */}
       <form onSubmit={handleAdd} className="add-form">
         <input
           placeholder="Add a new todo…"
@@ -98,20 +79,20 @@ export default function App() {
         </button>
       </form>
 
-      {/* routes (All / Active / Completed) render the same list component */}
       <Routes>
         <Route
           path="/"
           element={
             <TodoList
               items={visible}
-              dispatch={dispatch}
-              editingId={editingId}
-              draft={draft}
-              setDraft={setDraft}
-              onStartEdit={startEditing}
-              onSaveEdit={saveEditing}
-              onCancelEdit={cancelEditing}
+              editId={editingId}
+              text={draft}
+              setText={setDraft}
+              toggle={toggle}
+              start={start}
+              save={save}
+              cancel={cancel}
+              remove={remove}
             />
           }
         />
@@ -120,13 +101,14 @@ export default function App() {
           element={
             <TodoList
               items={visible}
-              dispatch={dispatch}
-              editingId={editingId}
-              draft={draft}
-              setDraft={setDraft}
-              onStartEdit={startEditing}
-              onSaveEdit={saveEditing}
-              onCancelEdit={cancelEditing}
+              editId={editingId}
+              text={draft}
+              setText={setDraft}
+              toggle={toggle}
+              start={start}
+              save={save}
+              cancel={cancel}
+              remove={remove}
             />
           }
         />
@@ -135,22 +117,23 @@ export default function App() {
           element={
             <TodoList
               items={visible}
-              dispatch={dispatch}
-              editingId={editingId}
-              draft={draft}
-              setDraft={setDraft}
-              onStartEdit={startEditing}
-              onSaveEdit={saveEditing}
-              onCancelEdit={cancelEditing}
+              editId={editingId}
+              text={draft}
+              setText={setDraft}
+              toggle={toggle}
+              start={start}
+              save={save}
+              cancel={cancel}
+              remove={remove}
             />
           }
         />
-        {/* unknown paths → redirect to All */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
 }
+
 
 
 

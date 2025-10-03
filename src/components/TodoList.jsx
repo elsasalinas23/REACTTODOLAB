@@ -1,16 +1,16 @@
 import React from "react";
 import TodoItem from "./TodoItem";
-import { TYPES } from "../reducers/todosReducer";
 
 export default function TodoList({
-  items,           // filtered items for this page
-  dispatch,        // reducer dispatch
-  editingId,       // which id is in edit mode (null = none)
-  draft,           // text while editing
-  setDraft,        // setter for draft
-  onStartEdit,     // enter edit mode
-  onSaveEdit,      // save edit
-  onCancelEdit     // cancel edit
+  items,    // filtered items for this page
+  editId,   // which id is editing
+  text,     // draft text
+  setText,  // setter
+  toggle,   // (id) => toggle
+  start,    // (todo) => start editing
+  save,     // (id) => save
+  cancel,   // () => cancel
+  remove    // (id) => delete
 }) {
   return (
     <>
@@ -19,18 +19,22 @@ export default function TodoList({
           <TodoItem
             key={todo.id}
             todo={todo}
-            isEditing={editingId === todo.id}
-            draft={draft}
-            setDraft={setDraft}
-            onToggle={() => dispatch({ type: TYPES.TOGGLE, id: todo.id })}
-            onStartEdit={() => onStartEdit(todo)}
-            onSaveEdit={() => onSaveEdit(todo.id)}
-            onCancelEdit={onCancelEdit}
-            onDelete={() => dispatch({ type: TYPES.DELETE, id: todo.id })}
+            editId={editId}
+            text={text}
+            setText={setText}
+            toggle={toggle}
+            start={start}
+            save={save}
+            cancel={cancel}
+            remove={remove}
           />
         ))}
       </ul>
 
+      <p className="tip">
+        Tip: You can only delete completed items. Check the box first, then delete.
+      </p>
     </>
   );
 }
+
