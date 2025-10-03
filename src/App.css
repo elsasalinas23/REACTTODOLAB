@@ -1,42 +1,102 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Base page */
+body {
+  font-family: system-ui, Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* App container */
+.todo-app {
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.todo-app h1 {
+  margin: 0 0 12px;
+  font-size: 22px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Tabs (All/Active/Completed) */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.card {
-  padding: 2em;
+.tab-link {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
 }
 
-.read-the-docs {
+.tab-link.active {
+  background: #111;
+  color: white;
+}
+
+/* Add form */
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-form input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.add-form button {
+  padding: 8px 12px;
+}
+
+/* List + item rows */
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+}
+
+.todo-main {
+  flex: 1;
+}
+
+.todo-item input[type="text"] {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.todo-item button {
+  padding: 4px 8px;
+  margin-left: 4px;
+}
+
+.completed {
+  text-decoration: line-through;
   color: #888;
 }
+
+.tip {
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+}
+
