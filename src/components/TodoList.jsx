@@ -31,9 +31,6 @@ export default function TodoList({
         ))}
       </ul>
 
-      <p className="tip">
-        Tip: You can only delete completed items. Check the box first, then delete.
-      </p>
     </>
   );
 }
